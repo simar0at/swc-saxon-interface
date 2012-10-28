@@ -1,0 +1,1 @@
+ <div class="boilerplate metadata" id="{{{2}}}" style="{{style_{{{1}}}}}"><center><b>{{{2}}}{{{3}}}</div><noinclude> [[Category:قوالب|{{PAGENAME}}]] </noinclude>
