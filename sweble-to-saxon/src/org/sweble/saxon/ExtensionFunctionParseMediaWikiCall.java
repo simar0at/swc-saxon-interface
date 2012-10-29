@@ -21,18 +21,26 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import de.fau.cs.osr.ptk.common.Warning;
 import de.fau.cs.osr.ptk.common.ast.AstNode;
+import de.fau.cs.osr.ptk.common.ast.AstNodeListImpl;
+import de.fau.cs.osr.ptk.common.ast.AstText;
+import de.fau.cs.osr.ptk.common.ast.Uninitialized;
 import de.fau.cs.osr.ptk.common.xml.SerializationException;
 import de.fau.cs.osr.ptk.common.xml.XmlWriter;
 import de.fau.cs.osr.utils.NameAbbrevService;
 
-import org.sweble.wikitext.engine.CompiledPage;
-import org.sweble.wikitext.engine.Compiler;
 import org.sweble.wikitext.engine.ExpansionCallback;
 import org.sweble.wikitext.engine.ExpansionFrame;
 import org.sweble.wikitext.engine.FullPage;
 import org.sweble.wikitext.engine.PageId;
 import org.sweble.wikitext.engine.PageTitle;
-import org.sweble.wikitext.engine.config.WikiConfigurationInterface;
+import org.sweble.wikitext.engine.WtEngine;
+import org.sweble.wikitext.engine.config.WikiConfig;
+import org.sweble.wikitext.engine.nodes.EngCompiledPage;
+import org.sweble.wikitext.engine.nodes.EngNode;
+import org.sweble.wikitext.parser.nodes.WtNode;
+import org.sweble.wikitext.parser.nodes.WtNodeList;
+import org.sweble.wikitext.parser.nodes.WtText;
+
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.om.*;
@@ -67,7 +75,7 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 //	}
 	
 	protected static Map<String, FullPage> knownPages = Collections.synchronizedMap(new LinkedHashMap<String, FullPage>());
-	protected static WikiConfigurationInterface config;
+	protected static WikiConfig config;
 	
 //	@Override
 //	public void copyLocalData(ExtensionFunctionCall destination) {
@@ -128,17 +136,24 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 			//		}
 
 //			FullParser parser = new FullParser(WARNINGS_DISABLED, GATHER_RTD, NO_AUTO_CORRECTION);
-			AstNode ast = null;
-			Compiler wikiCompiler = new Compiler(config);
+//			AstNode ast = null;
+			WtEngine wtEngine = new WtEngine(config);
 //			try {
 //				ast = parser.parseArticle(data, "");
-				CompiledPage p = wikiCompiler.postprocess(new PageId(PageTitle.make(config, "target"), 0), data, new ExpansionCallback() {
+				EngCompiledPage p = wtEngine.postprocess(new PageId(PageTitle.make(config, "target"), 0), data, new ExpansionCallback() {
 					
 					@Override
 					public FullPage retrieveWikitext(ExpansionFrame arg0, PageTitle arg1)
 							throws Exception {
 						FullPage ret = knownPages.get(arg1.getTitle()); 
 						return ret;
+					}
+
+					@Override
+					public String fileUrl(PageTitle pageTitle, int width,
+							int height) throws Exception {
+						// TODO Auto-generated method stub
+						return null;
 					}
 				});
 				Iterator<Warning> iter = p.getWarnings().iterator();
@@ -147,7 +162,7 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 					Warning w = iter.next();
 					System.err.println(w.toString());
 				}
-				ast = p;
+//				ast = p;
 //			} catch (IOException e1) {
 //				// TODO Auto-generated catch block
 //				e1.printStackTrace(exceptionTrace);
@@ -163,7 +178,9 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 					"org.sweble.wikitext.lazy.preprocessor",
 					"org.sweble.wikitext.lazy.utils",
 					"org.sweble.wikitext.engine",
-					"org.sweble.wikitext.engine.log");
+					"org.sweble.wikitext.engine.nodes",
+					"org.sweble.wikitext.engine.log",
+					"org.sweble.wikitext.parser.nodes");
 
 			DocumentInfo doc = null;
 			try {
@@ -173,9 +190,9 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 						"com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
 				System.setProperties(newProps);
 				StringWriter writer = new StringWriter();
-				XmlWriter ptkToXmlWriter = new XmlWriter();
+				XmlWriter<WtNode> ptkToXmlWriter = new XmlWriter<WtNode>(WtNode.class, WtNodeList.WtNodeListImpl.class, WtText.class);
 				ptkToXmlWriter.setCompact(true);
-				ptkToXmlWriter.serialize(ast, writer, as);
+				ptkToXmlWriter.serialize(p, writer, as);
 				System.setProperties(props);
 				doc = ctx.getConfiguration().buildDocument(new StreamSource(new StringReader(writer.toString())));
 			} catch (SerializationException e) {

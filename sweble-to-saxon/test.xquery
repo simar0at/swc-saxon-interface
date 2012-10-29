@@ -6,7 +6,17 @@ declare namespace ptk="http://sweble.org/doc/site/tooling/parser-toolkit/ptk-xml
 declare option saxon:output "method=xml";
 declare option saxon:output "indent=yes";
 
-let $namespaces := (
+declare function local:getIwPrefix($s as xs:string) as xs:string {
+    replace(replace($s, "http://", ""), "\..*$", "")
+};
+
+let $site := swc:configureSite(/mw:mediawiki/mw:siteinfo/mw:sitename,
+replace(/mw:mediawiki/mw:siteinfo/mw:base, "wiki/.+$", "wiki/\$1"),
+local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
+local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
+false())
+
+let $namespaces := $site|(
 for $namespace in /mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace
 return
   swc:configureNamespace(data($namespace/@key), $namespace/text())
@@ -24,6 +34,7 @@ let $title := $page/mw:title/text()
 let $bla := $templates|swc:parseMediaWiki($page/mw:revision[1]/mw:text)
 let $warnings := $bla/ptk:ast//warnings 
 where $page/mw:ns != 10 and $title = "جنوب السودان"
+(:where $page/mw:ns != 10 and $title = "النيل":)
 return 
 (:(
     <title>{$title}</title>,
@@ -36,8 +47,13 @@ return
    ( 
    $title,
    $bla,
-   string-join($bla//ptk:t/text()|$bla//InternalLink/target[not (../title//ptk:t)], " "), 
+   string-join($bla//ptk:t/text() except $bla//WtXmlAttribute/value/ptk:l/ptk:t/text()|
+               $bla//WtInternalLink/target[not (../title//ptk:t)]/WtPageName/content except
+               $bla/ptk:ast/EngCompiledPage/page/ptk:l/WtSection[last()]/body/ptk:l/ptk:l[last()]/WtInternalLink/target/WtPageName/content,
+               " "), 
    "&#10;"
    ) 
 (:   $bla/ptk:ast/CompiledPage/warnings:)
 (:   $bla//ptk:t/text():)
+(: every link which has no text but not the interwiki links at the bottom of the page
+$bla//WtInternalLink/target[not(../title//ptk:t)] except $bla/ptk:ast/EngCompiledPage/page/ptk:l/WtSection[last()]/body/ptk:l/ptk:l[last()]/WtInternalLink/target :)
