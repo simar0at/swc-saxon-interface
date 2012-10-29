@@ -79,36 +79,8 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 
 			StringReader inStream = new StringReader(data);
 
-			//    	WikiConfigurationInterface config = null;
-			//    	Compiler compiler = null;
-			//    	try {
-			//			config = new SimpleWikiConfiguration("classpath:/org/sweble/wikitext/engine/SimpleWikiConfiguration.xml");
-			//			compiler = new Compiler(config);
-			//			
-			//			Namespace ns = null;
-			//			if (namespace != null)
-			//				ns = config.getNamespace(namespace);
-			//			 
-			//			PageTitle title = PageTitle.make(config, page, ns);
-			//			FullPage fullPage = retrieve(null, title);
-			//			if (fullPage == null)
-			//				return null;
-			//			
-			//			boolean forInclusion = false;
-			//			
-			//			 compiler.preprocess(
-			//					fullPage.getId(),
-			//					fullPage.getText(),
-			//					forInclusion,
-			//					new ExpansionCallbackImpl());
-			//		} catch (FileNotFoundException e2) {
-			//			// TODO Auto-generated catch block
-			//			e2.printStackTrace();
-			//		} catch (JAXBException e2) {
-			//			// TODO Auto-generated catch block
-			//			e2.printStackTrace();
-			//		}
-
+			if (config == null)
+				throw new RuntimeException("You have to set up the configuration first using configureSite, configureNamespace and storeTemplate.");
 			WtEngine wtEngine = new WtEngine(config);
 			EngCompiledPage p = wtEngine.postprocess(new PageId(PageTitle.make(config, "target"), 0), data, new ExpansionCallback() {
 
@@ -122,7 +94,7 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 				@Override
 				public String fileUrl(PageTitle pageTitle, int width,
 						int height) throws Exception {
-					// Used for existence checks. Pretend that it does.
+					// TODO: Used for existence checks. Pretend that it does for now.
 					return "";
 				}
 			});

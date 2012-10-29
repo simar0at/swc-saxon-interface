@@ -22,7 +22,14 @@ return
   swc:configureNamespace(data($namespace/@key), $namespace/text())
 )
 
-let $templates := $namespaces|(
+let $pageTitles := $namespaces|(
+for $page in /mw:mediawiki/mw:page
+where $page/mw:ns != 10
+return
+  swc:storePageTitle($page/mw:title, $page/mw:revision[1]/mw:id)
+)
+
+let $templates := $pageTitles|(
 for $page in /mw:mediawiki/mw:page
 where $page/mw:ns = 10
 return

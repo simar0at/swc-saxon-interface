@@ -11,7 +11,7 @@ import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.value.IntegerValue;
 import net.sf.saxon.value.StringValue;
 
-public class ExtensionFunctionParseMediaWikiStoreTemplateCall extends ExtensionFunctionParseMediaWikiCall {
+public class ExtensionFunctionParseMediaWikiStorePageTitleCall extends ExtensionFunctionParseMediaWikiCall {
 
 	private static final long serialVersionUID = 6130119479298672307L;
 
@@ -32,7 +32,6 @@ public class ExtensionFunctionParseMediaWikiStoreTemplateCall extends ExtensionF
 					throws XPathException {
 		String title;
 		int revision;
-		String text = ""; 
 		try {
 			StringValue in = (StringValue) args[0].next();
 
@@ -49,12 +48,8 @@ public class ExtensionFunctionParseMediaWikiStoreTemplateCall extends ExtensionF
 			revision = inInt.getDecimalValue().intValue();
 			title = in.getStringValue();
 			
-			in = (StringValue) args[2].next();
-			if(null != in) {
-				text = in.getStringValue();
-			}
 			PageTitle p = PageTitle.make(config, title);
-			knownPages.put(p.getTitle(), new FullPage(new PageId(p, revision), text));
+			knownPages.put(p.getTitle(), new FullPage(new PageId(p, revision), ""));
 			
 		} catch (Exception e) {
 			
