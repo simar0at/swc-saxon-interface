@@ -44,7 +44,7 @@ return
       ($text, <seg/>) }
     </text>
 ):)
-   ( 
+(:   ( 
    $title,
    $bla,
    string-join($bla//ptk:t/text() except $bla//WtXmlAttribute/value/ptk:l/ptk:t/text()|
@@ -52,8 +52,8 @@ return
                $bla/ptk:ast/EngCompiledPage/page/ptk:l/WtSection[last()]/body/ptk:l/ptk:l[last()]/WtInternalLink/target/WtPageName/content,
                " "), 
    "&#10;"
-   ) 
+   ) :)
 (:   $bla/ptk:ast/CompiledPage/warnings:)
-(:   $bla//ptk:t/text():)
+   $bla
 (: every link which has no text but not the interwiki links at the bottom of the page
 $bla//WtInternalLink/target[not(../title//ptk:t)] except $bla/ptk:ast/EngCompiledPage/page/ptk:l/WtSection[last()]/body/ptk:l/ptk:l[last()]/WtInternalLink/target :)

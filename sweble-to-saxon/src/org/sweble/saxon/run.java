@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
-import org.apache.commons.io.FileUtils;
 
 import net.sf.saxon.expr.CollationMap;
 import net.sf.saxon.expr.EarlyEvaluationContext;
@@ -32,7 +31,7 @@ public class run {
 		SequenceIterator<NodeInfo> result = null;
 		try {
 			String thisLine;
-			FileInputStream in = FileUtils.openInputStream(new File(args[0]));
+			FileInputStream in = new FileInputStream(new File(args[0]));
 			//from here is the classic approach - read bytes, characters,
 			//lines in Java style
 			InputStreamReader inStream = new InputStreamReader(in, "UTF-8");
