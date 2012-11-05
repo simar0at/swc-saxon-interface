@@ -8,7 +8,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/rats-runtime-1.15.0.jar"/>
-	<classpathentry kind="lib" path="lib/ptk-xml-tools-2.0.0-alpha-1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/swc-engine-2.0.0-alpha-1-SNAPSHOT-jar-with-dependencies.jar" sourcepath="/swc-engine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ptk-common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ptk-xml-tools"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/swc-engine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/swc-parser-lazy"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/utils"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

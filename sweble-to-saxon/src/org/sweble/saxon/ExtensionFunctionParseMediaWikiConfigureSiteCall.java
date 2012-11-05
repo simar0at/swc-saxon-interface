@@ -55,7 +55,9 @@ public class ExtensionFunctionParseMediaWikiConfigureSiteCall extends ExtensionF
 			}
 		}
 
-		if (config == null) config = new DefaultConfigForDump(argsAsStrings.get(0), argsAsStrings.get(1), argsAsStrings.get(2), argsAsStrings.get(3), reportProblems).getConfig();
+		ExtensionFunctionParseMediaWikiCall.reportProblems = reportProblems;
+//		if (config == null) reset everything.
+		config = new DefaultConfigForDump(argsAsStrings.get(0), argsAsStrings.get(1), argsAsStrings.get(2), argsAsStrings.get(3)).getConfig();
 
 		return EmptyIterator.getInstance(); 
 	}

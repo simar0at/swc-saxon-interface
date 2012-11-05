@@ -9,14 +9,15 @@ public class DefaultConfigForDump extends DefaultConfig {
 	private String wikiUrl = "http://localhost/";
 	private String contentLang = "en";
 	private String ownIwPrefix = "en";
-	
+
 	DefaultConfigForDump() {
 		super(new WikiConfigImpl());
 		DefaultConfig.generate(this);
 	}
 	
-	DefaultConfigForDump(String siteName, String wikiUrl, String contentLang, String ownIwPrefix, boolean reportProblems) {
-		super(reportProblems ? new WikiConfigurationProblemReporter(): new WikiConfigImpl());
+	DefaultConfigForDump(String siteName, String wikiUrl, String contentLang, String ownIwPrefix) {
+//		super(reportProblems ? new WikiConfigurationProblemReporter(): new WikiConfigImpl());
+		super(new WikiConfigImpl());
 		this.siteName = siteName;
 		this.wikiUrl = wikiUrl;
 		this.contentLang = contentLang;

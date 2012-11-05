@@ -14,7 +14,7 @@ let $site := swc:configureSite(/mw:mediawiki/mw:siteinfo/mw:sitename,
 replace(/mw:mediawiki/mw:siteinfo/mw:base, "wiki/.+$", "wiki/\$1"),
 local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
 local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
-false())
+true())
 
 let $namespaces := $site|(
 for $namespace in /mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace
@@ -40,8 +40,11 @@ for $page in /mw:mediawiki/mw:page
 let $title := $page/mw:title/text()
 let $bla := $templates|swc:parseMediaWiki($page/mw:revision[1]/mw:text)
 let $warnings := $bla/ptk:ast//warnings 
-where $page/mw:ns != 10 and $title = "جنوب السودان"
+(:where $page/mw:ns != 10 and $title = "جنوب السودان":)
 (:where $page/mw:ns != 10 and $title = "النيل":)
+(:where $title = "ألبانيا":)
+(:where $title = "الامبراطوريه الرومانيه":)
+where $title = "نايجيريا"
 return 
 (:(
     <title>{$title}</title>,

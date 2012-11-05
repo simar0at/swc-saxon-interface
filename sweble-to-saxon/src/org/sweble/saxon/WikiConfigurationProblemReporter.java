@@ -16,10 +16,10 @@ public class WikiConfigurationProblemReporter extends WikiConfigImpl implements 
 	private static final long serialVersionUID = -7320472197068145857L;
 
 	public WikiConfigurationProblemReporter() {
-		this.parserConfig = new ParserConfigProblemReporter(this);
-		this.compilerConfig = new CompilerConfigImpl();
-		this.nodeFactory = new EngineNodeFactoryImpl(this);
-		this.runtimeInfo = new WikiRuntimeInfoImpl(this);
+//		this.parserConfig = new ParserConfigProblemReporter(this);
+//		this.compilerConfig = new CompilerConfigImpl();
+//		this.nodeFactory = new EngineNodeFactoryImpl(this);
+//		this.runtimeInfo = new WikiRuntimeInfoImpl(this);
 		}
 	
 	Set<String> knownMissingParserFunctions = new HashSet<String>();
