@@ -44,7 +44,8 @@ let $warnings := $bla/ptk:ast//warnings
 (:where $page/mw:ns != 10 and $title = "النيل":)
 (:where $title = "ألبانيا":)
 (:where $title = "الامبراطوريه الرومانيه":)
-where $title = "نايجيريا"
+(:where $title = "نايجيريا":)
+where $title = "7 يناير"
 return 
 (:(
     <title>{$title}</title>,
