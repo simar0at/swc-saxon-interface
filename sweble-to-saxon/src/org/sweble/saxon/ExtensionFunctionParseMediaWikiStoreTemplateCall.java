@@ -1,9 +1,14 @@
 package org.sweble.saxon;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.dom.DOMSource;
+
 import org.sweble.wikitext.engine.FullPage;
 import org.sweble.wikitext.engine.PageId;
 import org.sweble.wikitext.engine.PageTitle;
+import org.sweble.wikitext.engine.config.WikiConfigImpl;
 
+import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
@@ -25,6 +30,9 @@ public class ExtensionFunctionParseMediaWikiStoreTemplateCall extends ExtensionF
 //		return null;
 //	}
 	
+	private WikiConfigImpl config = null;
+	private DocumentInfo configDoc = null;
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public SequenceIterator<NodeInfo> call(
@@ -34,6 +42,15 @@ public class ExtensionFunctionParseMediaWikiStoreTemplateCall extends ExtensionF
 		int revision;
 		String text = ""; 
 		try {
+			DocumentInfo currentConfigDoc = (DocumentInfo) args[3].next();
+			if (configDoc == null || !configDoc.equals(currentConfigDoc))
+				try {
+					configDoc = currentConfigDoc;
+					config = WikiConfigImpl.load(new DOMSource(NodeOverNodeInfo.wrap(configDoc)));
+				} catch (JAXBException e) {
+					return EmptyIterator.getInstance();
+				}
+			
 			StringValue in = (StringValue) args[0].next();
 
 			if(null == in) {

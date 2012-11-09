@@ -10,36 +10,35 @@ declare function local:getIwPrefix($s as xs:string) as xs:string {
     replace(replace($s, "http://", ""), "\..*$", "")
 };
 
-let $site := swc:configureSite(/mw:mediawiki/mw:siteinfo/mw:sitename,
+(:let $site := swc:configureSite(/mw:mediawiki/mw:siteinfo/mw:sitename,
 replace(/mw:mediawiki/mw:siteinfo/mw:base, "wiki/.+$", "wiki/\$1"),
 local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
 local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
-true())
+true()):)
+let $baseConfig := swc:configureSiteFromURL(/mw:mediawiki/mw:siteinfo/mw:sitename,
+    /mw:mediawiki/mw:siteinfo/mw:base, false())    
 
-let $namespaces := $site|(
-for $namespace in /mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace
-return
-  swc:configureNamespace(data($namespace/@key), $namespace/text())
-)
+let $config := swc:configureNamespace(data(/mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace/@key), /mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace/text(), $baseConfig)
 
-let $pageTitles := $namespaces|(
+let $pageAllExistingTitlesStored := (
 for $page in /mw:mediawiki/mw:page
 where $page/mw:ns != 10
 return
-  swc:storePageTitle($page/mw:title, $page/mw:revision[1]/mw:id)
+  swc:storePageTitle($page/mw:title, $page/mw:revision[1]/mw:id, $config)
 )
 
-let $templates := $pageTitles|(
+let $templatesStored := $pageAllExistingTitlesStored|(
 for $page in /mw:mediawiki/mw:page
 where $page/mw:ns = 10
 return
-  swc:storeTemplate($page/mw:title, $page/mw:revision[1]/mw:id, $page/mw:revision/mw:text/text())
+  swc:storeTemplate($page/mw:title, $page/mw:revision[1]/mw:id, $page/mw:revision/mw:text/text(), $config)
 )
+
 
 for $page in /mw:mediawiki/mw:page
 let $title := $page/mw:title/text()
-let $bla := $templates|swc:parseMediaWiki($page/mw:revision[1]/mw:text)
-let $warnings := $bla/ptk:ast//warnings 
+let $parsedPage := $templatesStored|swc:parseMediaWiki($title, $page/mw:revision[1]/mw:text, $config)
+let $warnings := $parsedPage/ptk:ast//warnings 
 (:where $page/mw:ns != 10 and $title = "جنوب السودان":)
 (:where $page/mw:ns != 10 and $title = "النيل":)
 (:where $title = "ألبانيا":)
@@ -65,6 +64,7 @@ return
    "&#10;"
    ) :)
 (:   $bla/ptk:ast/CompiledPage/warnings:)
-   $bla
+   $parsedPage
 (: every link which has no text but not the interwiki links at the bottom of the page
 $bla//WtInternalLink/target[not(../title//ptk:t)] except $bla/ptk:ast/EngCompiledPage/page/ptk:l/WtSection[last()]/body/ptk:l/ptk:l[last()]/WtInternalLink/target :)
+

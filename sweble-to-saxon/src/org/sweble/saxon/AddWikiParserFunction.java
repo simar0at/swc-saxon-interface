@@ -13,6 +13,7 @@ public class AddWikiParserFunction implements Initializer {
 		arg0.registerExtensionFunction(new ExtensionFunctionParseMediaWikiConfigureNS());
 		arg0.registerExtensionFunction(new ExtensionFunctionParseMediaWikiStoreTemplate());
 		arg0.registerExtensionFunction(new ExtensionFunctionParseMediaWikiConfigureSite());		
+		arg0.registerExtensionFunction(new ExtensionFunctionParseMediaWikiConfigureSiteFromURL());		
 		arg0.registerExtensionFunction(new ExtensionFunctionParseMediaWikiStorePageTitle());	}
 
 }

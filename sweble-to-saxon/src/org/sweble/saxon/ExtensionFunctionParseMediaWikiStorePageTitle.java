@@ -5,6 +5,7 @@ import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.om.*;
 import net.sf.saxon.value.SequenceType;
 
+//swc:storePageTitle($title as xs:string, $revision as xs:int, $config as node()+) as empty()
 public class ExtensionFunctionParseMediaWikiStorePageTitle extends
 		ExtensionFunctionDefinition {
 
@@ -14,7 +15,7 @@ public class ExtensionFunctionParseMediaWikiStorePageTitle extends
                     "http://sweble.org/doc/site/tooling/sweble/sweble-wikitext",
                     "storePageTitle");
 	private final static SequenceType[] argumentTypes = new SequenceType[] {
-        SequenceType.SINGLE_STRING, SequenceType.SINGLE_INT};
+        SequenceType.SINGLE_STRING, SequenceType.SINGLE_INT, SequenceType.OPTIONAL_DOCUMENT_NODE};
 	
 	@Override
 	public SequenceType[] getArgumentTypes() {
@@ -28,12 +29,12 @@ public class ExtensionFunctionParseMediaWikiStorePageTitle extends
 
     @Override
     public int getMinimumNumberOfArguments() {
-        return 2;
+        return 3;
     }
 
     @Override
     public int getMaximumNumberOfArguments() {
-        return 2;
+        return 3;
     }
     
 	@Override

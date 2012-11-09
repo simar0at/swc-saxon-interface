@@ -1,5 +1,7 @@
 package org.sweble.saxon;
 
+import static org.sweble.saxon.util.*;
+
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -17,12 +19,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 
 import de.fau.cs.osr.ptk.common.Warning;
 import de.fau.cs.osr.ptk.common.xml.SerializationException;
 import de.fau.cs.osr.ptk.common.xml.XmlWriter;
 import de.fau.cs.osr.utils.NameAbbrevService;
+import de.fau.cs.osr.utils.getopt.Configuration;
 
 import org.sweble.wikitext.engine.CompilerException;
 import org.sweble.wikitext.engine.ExpansionCallback;
@@ -35,6 +40,7 @@ import org.sweble.wikitext.engine.PageTitle;
 import org.sweble.wikitext.engine.ParserFunctionBase;
 import org.sweble.wikitext.engine.WtEngine;
 import org.sweble.wikitext.engine.config.WikiConfig;
+import org.sweble.wikitext.engine.config.WikiConfigImpl;
 import org.sweble.wikitext.engine.lognodes.ResolveParserFunctionLog;
 import org.sweble.wikitext.engine.lognodes.ResolveTagExtensionLog;
 import org.sweble.wikitext.engine.lognodes.ResolveTransclusionLog;
@@ -47,6 +53,9 @@ import org.sweble.wikitext.parser.nodes.WtTemplate;
 import org.sweble.wikitext.parser.nodes.WtTemplateArgument;
 import org.sweble.wikitext.parser.nodes.WtText;
 
+import net.sf.saxon.dom.NodeOverNodeInfo;
+import net.sf.saxon.event.Builder;
+import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.om.*;
@@ -64,13 +73,19 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 	 */
 
 	protected static Map<String, FullPage> knownPages = Collections.synchronizedMap(new LinkedHashMap<String, FullPage>());
-	protected static WikiConfig config;
 	protected static boolean reportProblems = false;
+	
+	private WikiConfigImpl config = null;
+	private DocumentInfo configDoc = null;
+	
+	private TreeModel treeModel = null;
+	private PipelineConfiguration pipe = null;
 
 	//	@Override
 	//	public void copyLocalData(ExtensionFunctionCall destination) {
 	//		ExtensionFunctionParseMediaWikiCall dest = (ExtensionFunctionParseMediaWikiCall) destination;
 	//	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -79,18 +94,35 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 					throws XPathException {
 		SequenceIterator<NodeInfo> result = null;
 		String data = "";
+		String title = "input";
 		try {
+			
+			DocumentInfo currentConfigDoc = (DocumentInfo) args[2].next();
+			if (configDoc == null || !configDoc.equals(currentConfigDoc))
+				try {
+					configDoc = currentConfigDoc;
+					config = WikiConfigImpl.load(new DOMSource(NodeOverNodeInfo.wrap(configDoc)));
+				} catch (JAXBException e) {
+					return EmptyIterator.getInstance();
+				}
+			
 			StringValue in = (StringValue) args[0].next();
 			if(null == in) {
 				return EmptyIterator.getInstance();
 			}
+			
+			title = in.getStringValue();
 
+			in = (StringValue) args[1].next();
+			if(null == in) {
+				return EmptyIterator.getInstance();
+			}
+			
 			data = in.getStringValue();
 
 			StringReader inStream = new StringReader(data);
 
-			if (config == null)
-				throw new RuntimeException("You have to set up the configuration first using configureSite, configureNamespace and storeTemplate.");
+			
 			WtEngine wtEngine = new WtEngine(config);
 			if (reportProblems) {
 				wtEngine.setDebugHooks(new ExpansionDebugHooks() {
@@ -133,7 +165,7 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 					}
 				});
 			}
-			EngCompiledPage p = wtEngine.postprocess(new PageId(PageTitle.make(config, "input"), 0), data, new ExpansionCallback() {
+			EngCompiledPage p = wtEngine.postprocess(new PageId(PageTitle.make(config, title), 0), data, new ExpansionCallback() {
 
 				@Override
 				public FullPage retrieveWikitext(ExpansionFrame arg0, PageTitle arg1)
@@ -171,18 +203,21 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 
 			DocumentInfo doc = null;
 			try {
-//				Properties props = System.getProperties();
-//				Properties newProps = new Properties(props);
-//				newProps.put("javax.xml.transform.TransformerFactory",
-//						"com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
-//				System.setProperties(newProps);
 				StringWriter writer = new StringWriter();
 				XmlWriter<WtNode> ptkToXmlWriter = new XmlWriter<WtNode>(WtNode.class, WtNodeList.WtNodeListImpl.class, WtText.class);
-				ptkToXmlWriter.setCompact(true);
-				ptkToXmlWriter.serialize(p, writer, as);
-//				System.setProperties(props);
+		        net.sf.saxon.Configuration saxonConf = ctx.getConfiguration();
+		        if (treeModel == null) // that doesn't change afaik.
+		        {
+		        	treeModel = saxonConf.getParseOptions().getModel();
+		        	pipe = saxonConf.makePipelineConfiguration();
+		        }
+		        Builder builder = treeModel.makeBuilder(pipe);
+		        builder.setTiming(false);
+		        builder.setLineNumbering(false);
+		        builder.setPipelineConfiguration(pipe);
+				ptkToXmlWriter.serialize(p, builder, as);
 
-				doc = ctx.getConfiguration().buildDocument(new StreamSource(new StringReader(writer.toString())));
+				doc = (DocumentInfo) builder.getCurrentRoot();
 			} catch (SerializationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -205,11 +240,7 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 	}
 
 	private void writeWikiTextOnException(String title, Exception e, String wikiText) {
-		ByteArrayOutputStream exceptionTraceText = new ByteArrayOutputStream();
-		PrintStream exceptionTrace = new PrintStream(exceptionTraceText);
-		String tempFileName = "Temp file not set!";
-		
-		e.printStackTrace(exceptionTrace);
+		String tempFileName = "Temp file not set!";		
 
 		// Create temp file.
 		File temp;
@@ -229,6 +260,6 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 			e1.printStackTrace();
 		}
 
-		throw new RuntimeException("See: " + tempFileName + ". Error while parsing. " + exceptionTraceText.toString());
+		throw new RuntimeException("See: " + tempFileName + ". Error while parsing. " + getStackTraceAsText(e));
 	}
 }

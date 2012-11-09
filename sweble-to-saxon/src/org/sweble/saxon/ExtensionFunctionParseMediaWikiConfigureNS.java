@@ -1,10 +1,13 @@
 package org.sweble.saxon;
 
+import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.om.*;
+import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.value.SequenceType;
 
+// swc:configureNS($namespaceKeys as xs:int+, $namespaceNames as xs:string+ $baseConfig as node()+) as node()+
 public class ExtensionFunctionParseMediaWikiConfigureNS extends
 		ExtensionFunctionDefinition {
 
@@ -14,7 +17,7 @@ public class ExtensionFunctionParseMediaWikiConfigureNS extends
                     "http://sweble.org/doc/site/tooling/sweble/sweble-wikitext",
                     "configureNamespace");
 	private final static SequenceType[] argumentTypes = new SequenceType[] {
-        SequenceType.SINGLE_INT, SequenceType.OPTIONAL_STRING};
+        SequenceType.makeSequenceType(BuiltInAtomicType.INT, StaticProperty.ALLOWS_ONE_OR_MORE), SequenceType.makeSequenceType(BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ONE_OR_MORE), SequenceType.OPTIONAL_DOCUMENT_NODE};
 	
 	@Override
 	public SequenceType[] getArgumentTypes() {
@@ -28,12 +31,12 @@ public class ExtensionFunctionParseMediaWikiConfigureNS extends
 
     @Override
     public int getMinimumNumberOfArguments() {
-        return 2;
+        return 3;
     }
 
     @Override
     public int getMaximumNumberOfArguments() {
-        return 2;
+        return 3;
     }
     
 	@Override
