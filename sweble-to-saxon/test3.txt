@@ -1,7 +1,0 @@
-<onlyinclude><div class="infobox sisterproject" style="float:left; margin-left:-0.8em;">
-<div style="float: left;">[[Image:Wiktionary-logo-en.svg|49px|none|Wiktionary|]]</div>
-<div style="margin-left: 60px;">دور على   '''''[[wiktionary:{{{1|Special:Search/{{lc:{{PAGENAME}}}}}}}|{{{2|{{{1|{{PAGENAME}}}}}}}}]]''''' في <br />[[ ويكشينارى| ويكشينارى]], القاموس الحر.</div>
-</div></onlyinclude><noinclude>
-
-</noinclude>
-
