@@ -53,15 +53,13 @@ public class ExtensionFunctionParseMediaWikiConfigureNSCall extends ExtensionFun
 			}
 		
 		IntegerValue inInt = (IntegerValue) args[0].next();
+		if(null == inInt) {
+			return EmptyIterator.getInstance();
+		}
 		StringValue in = (StringValue) args[1].next();
-		
-		while (args[0].next() != null)
+	
+		while (true)
 		{
-			
-			if(null == inInt) {
-				return EmptyIterator.getInstance();
-			}
-
 			if (null == in) {
 				prefix = "";
 			} else {
@@ -99,6 +97,8 @@ public class ExtensionFunctionParseMediaWikiConfigureNSCall extends ExtensionFun
 				break;
 			}
 			inInt = (IntegerValue) args[0].next();
+			if (inInt == null)
+				break;
 			in = (StringValue) args[1].next();
 		}
 		
