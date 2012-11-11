@@ -393,6 +393,11 @@
                   <exclude>org.apache.maven:lib:tests</exclude>
                   <exclude>log4j:log4j:jar:</exclude>
                   <exclude>net.sf.saxon:Saxon-HE:jar:</exclude>
+                  <exclude>xom:xom:jar:</exclude>
+                  <exclude>org.jdom:jdom:jar:</exclude>
+                  <exclude>xalan:xalan:jar:</exclude>
+                  <exclude>dom4j:dom4j:jar:</exclude>
+                  <exclude>xml-resolver:xml-resolver:jar:</exclude>
                 </excludes>
               </artifactSet>
             </configuration>

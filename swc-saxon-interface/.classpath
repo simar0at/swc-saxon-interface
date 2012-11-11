@@ -62,7 +62,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/de/fau/cs/osr/ptk/ptk-common/2.0.0-alpha-1-SNAPSHOT/ptk-common-2.0.0-alpha-1-SNAPSHOT.jar"/>
-	<classpathentry kind="var" path="M2_REPO/de/fau/cs/osr/ptk/ptk-xml-tools/2.0.0-alpha-1-SNAPSHOT/ptk-xml-tools-2.0.0-alpha-1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/de/fau/cs/osr/ptk/ptk-xml-tools/2.0.0-alpha-1-SNAPSHOT/ptk-xml-tools-2.0.0-alpha-1-SNAPSHOT.jar" sourcepath="/ptk-xml"/>
 	<classpathentry kind="var" path="M2_REPO/xtc/rats-runtime/1.15.0/rats-runtime-1.15.0.jar" sourcepath="M2_REPO/xtc/rats-runtime/1.15.0/rats-runtime-1.15.0-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/D:/Benutzer7/simar/.m2/repository/xtc/rats-runtime/1.15.0/rats-runtime-1.15.0-javadoc.jar!/"/>

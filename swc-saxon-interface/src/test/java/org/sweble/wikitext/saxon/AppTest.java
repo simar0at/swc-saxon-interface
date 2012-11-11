@@ -17,6 +17,26 @@ import junit.framework.TestSuite;
 public class AppTest 
     extends TestCase
 {
+	private class QueryTester
+			extends
+				Query
+	{
+		public void doQuery(URL xQuery)
+		{
+			doQuery(xQuery, null);
+		}
+		
+		public void doQuery(URL xQuery, URL sourceFile)
+		{
+			if (sourceFile != null)
+				sourceFileName = sourceFile.getFile();
+			queryFileName = xQuery.getFile();
+			doQuery(new String[] {"-init:org.sweble.wikitext.saxon.AddWikiParserFunction", "-o:" + xQuery.getFile().replaceAll("\\.xquery", "\\.xml")}, "java net.sf.saxon.Query");
+		}
+	}
+	
+	private QueryTester tester = new QueryTester();
+	
     /**
      * Create the test case
      *
@@ -46,11 +66,25 @@ public class AppTest
     	String path = StringUtils.decodeUsingDefaultCharset(xQueryUrl.getFile());
 		final File file = new File(path);
 		try {
-			Query.main(new String[] {"-init:org.sweble.wikitext.saxon.AddWikiParserFunction", "-s:M:\\arzwiki-20120728-pages-articles.xml", "-q:" + xQueryUrl.getFile()});
+			tester.doQuery(xQueryUrl);
 			assertTrue(true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
+    
+//    public void testComplete()
+//    {    	
+//    	URL xQueryUrl = AppTest.class.getResource("/" + TESTS_DIR + "/test.xquery");
+//    	URL sourceUrl = AppTest.class.getResource("/" + TESTS_DIR + "/minidump.xml");
+//    	String path = StringUtils.decodeUsingDefaultCharset(xQueryUrl.getFile());
+//    	final File file = new File(path);
+//    	try {
+//    		tester.doQuery(new String[] {"-init:org.sweble.wikitext.saxon.AddWikiParserFunction"}, xQueryUrl, sourceUrl);
+//    	} catch (Exception e) {
+//    		// TODO Auto-generated catch block
+//    		e.printStackTrace();
+//    	}
+//    }
 }

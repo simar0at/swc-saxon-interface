@@ -1,6 +1,8 @@
 package org.sweble.wikitext.saxon;
 
 import static org.sweble.wikitext.saxon.util.*;
+import static de.fau.cs.osr.ptk.common.xml.XmlConstants.PTK;
+import static de.fau.cs.osr.ptk.common.xml.XmlConstants.PTK_NS;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +14,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.dom.DOMSource;
 
@@ -70,7 +74,10 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 	private TreeModel treeModel = null;
 	private PipelineConfiguration pipe = null;
 	
-	private NameAbbrevService as = new NameAbbrevService(
+	private Properties envProperties = System.getProperties();
+	private Properties enforceSaxon9Propertiess = new Properties(envProperties);
+	
+	private NameAbbrevService as = new NameAbbrevService(PTK, PTK_NS,
 			new String[]{"de.fau.cs.osr.ptk.common.test", "ptk"},
 			new String[]{"de.fau.cs.osr.ptk.common.xml", "ptk"},
 			new String[]{"org.sweble.wikitext.lazy.parser", "swc", "http://sweble.org/doc/site/tooling/sweble/sweble-wikitext"},
@@ -86,6 +93,11 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 	//		ExtensionFunctionParseMediaWikiCall dest = (ExtensionFunctionParseMediaWikiCall) destination;
 	//	}
 
+	public ExtensionFunctionParseMediaWikiCall() {
+		super();
+	    enforceSaxon9Propertiess.put("javax.xml.transform.TransformerFactory",
+				"net.sf.saxon.TransformerFactoryImpl");
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -196,11 +208,23 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 				treeModel = saxonConf.getParseOptions().getModel();
 				pipe = saxonConf.makePipelineConfiguration();
 			}
+			// The following only works if a TransfromerFactory is used which is aware of the existence of
+			// the Saxon 9 implementations, e. g. the Saxon 9 factory net.sf.saxon.TransformerFactoryImpl.
+			// One factory that has problems with this is the Saxon 6 factory which is used by <oXygen/>
+			
+			System.setProperties(enforceSaxon9Propertiess);
 			Builder builder = treeModel.makeBuilder(pipe);
 			builder.setTiming(false);
 			builder.setLineNumbering(false);
 			builder.setPipelineConfiguration(pipe);
-			ptkToXmlWriter.serialize(p, builder, as);
+			try
+			{
+				ptkToXmlWriter.serialize(p, builder, as);
+			}
+			finally
+			{
+				System.setProperties(envProperties);
+			}
 
 			doc = (DocumentInfo) builder.getCurrentRoot();
 
