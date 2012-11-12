@@ -65,7 +65,7 @@ public class ExtensionFunctionParseMediaWikiConfigureSiteCall extends ExtensionF
 
 		boolean doWOMLikeProsessing = false;
 		
-		if (args.length == 5) {
+		if (args.length > 4) {
 			BooleanValue lastOption = (BooleanValue) args[4].next();
 			if(null != lastOption) {
 				doWOMLikeProsessing = lastOption.getBooleanValue();
@@ -73,7 +73,7 @@ public class ExtensionFunctionParseMediaWikiConfigureSiteCall extends ExtensionF
 		}
 
 		if (args.length == 6) {
-			BooleanValue lastOption = (BooleanValue) args[4].next();
+			BooleanValue lastOption = (BooleanValue) args[5].next();
 			if(null != lastOption) {
 				reportProblems = lastOption.getBooleanValue();
 			}

@@ -70,7 +70,7 @@ public class ExtensionFunctionParseMediaWikiConfigureSiteFromURLCall
 		
 		boolean doWOMLikeProcessing = false;
 		
-		if (args.length == 3) {
+		if (args.length > 2) {
 			BooleanValue lastOption = (BooleanValue) args[2].next();
 			if(null != lastOption) {
 				doWOMLikeProcessing = lastOption.getBooleanValue();

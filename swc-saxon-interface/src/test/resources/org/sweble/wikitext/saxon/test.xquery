@@ -16,7 +16,7 @@ local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
 local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
 true()):)
 let $baseConfig := swc:configureSiteFromURL(/mw:mediawiki/mw:siteinfo/mw:sitename,
-    /mw:mediawiki/mw:siteinfo/mw:base, false())    
+    /mw:mediawiki/mw:siteinfo/mw:base, true(), true())    
 
 let $config := swc:configureNamespace(data(/mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace/@key), /mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace, $baseConfig)
 
