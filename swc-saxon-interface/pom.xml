@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.sweble.wikitext</groupId>
     <artifactId>sweble-wikitext</artifactId>
-    <version>2.0.0-alpha-1-SNAPSHOT</version>
+    <version>2.0.0-simar-SNAPSHOT</version>
   </parent>
   
   <!-- This POM: Sweble Wikitext Components - Saxon interface -->
@@ -111,26 +111,21 @@
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
         <configuration>
-          <header>../etc/license-header.txt</header>
+          <header>./etc/license-header.txt</header>
           <mapping>
             <rats>JAVADOC_STYLE</rats>
-            <apt>PTK_APT_STYLE</apt>
             <xjb>XML_STYLE</xjb>
           </mapping>
-          <headerDefinitions>
-            <headerDefinition>../etc/license-header-apt-style.xml</headerDefinition>
-          </headerDefinitions>
-          <header>../etc/license-header.txt</header>
+          <header>./etc/license-header.txt</header>
           <excludes>
-            <exclude>src/main/autogen/org/sweble/wikitext/engine/wom/catalog/xml.xsd</exclude>
             <exclude>src/test/resources/**</exclude>
-            <exclude>src/site/site.xml</exclude>
-            <exclude>src/site/changes.xml</exclude>
-            <exclude>src/site/resources/css/site.css</exclude>
+            <exclude>run.java</exclude>
+            <exclude>testOut.xml</exclude>
             <exclude>**/.gitignore</exclude>
             <exclude>dependencies</exclude>
             <exclude>LICENSE</exclude>
             <exclude>NOTICE</exclude>
+            <exclude>etc/license-header.txt</exclude>
           </excludes>
         </configuration>
       </plugin>

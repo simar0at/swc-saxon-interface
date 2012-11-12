@@ -1,0 +1,15 @@
+Interface to Saxon for the OSR Sweble Wikitext Components
+Copyright 2012 Omar Siam
+
+This product includes software developed at
+The University of Erlangen-Nürnberg (http://http://www.uni-erlangen.de/).
+
+This product uses Saxon-HE "The Saxon XSLT and XQuery Processor from Saxonica Limited"
+which is covered by the MPL (see http://www.saxonica.com/documentation/conditions/intro.xml)".
+
+Some test cases used in this software rely on articles written in Wikitext that
+were taken from the English Wikipedia. These articles are licensed under the
+Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) license which can be found 
+at http://creativecommons.org/licenses/by-sa/3.0/. Each directory that contains
+such files holds a NOTICE file which gives detailed information about the 
+origin of the articles.

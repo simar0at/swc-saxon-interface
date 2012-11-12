@@ -18,7 +18,7 @@ true()):)
 let $baseConfig := swc:configureSiteFromURL(/mw:mediawiki/mw:siteinfo/mw:sitename,
     /mw:mediawiki/mw:siteinfo/mw:base, false())    
 
-let $config := swc:configureNamespace(data(/mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace/@key), /mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace/text(), $baseConfig)
+let $config := swc:configureNamespace(data(/mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace/@key), /mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace, $baseConfig)
 
 let $pageAllExistingTitlesStored := (
 for $page in /mw:mediawiki/mw:page
@@ -38,13 +38,16 @@ return
 for $page in /mw:mediawiki/mw:page
 let $title := $page/mw:title/text()
 let $parsedPage := $templatesStored|swc:parseMediaWiki($title, $page/mw:revision[1]/mw:text, $config)
-let $warnings := $parsedPage/ptk:ast//warnings 
+let $warnings := $parsedPage/ptk:ast//warnings
+let $pageI := $parsedPage/ptk:ast/swc:EngCompiledPage//swc:EngPage
+(:= $parsedPage/ptk:ast/swc:EngCompiledPage/child::*[1]/namespace-uri():)
 (:where $page/mw:ns != 10 and $title = "جنوب السودان":)
 (:where $page/mw:ns != 10 and $title = "النيل":)
 (:where $title = "ألبانيا":)
 (:where $title = "الامبراطوريه الرومانيه":)
 (:where $title = "نايجيريا":)
-where $title = "7 يناير"
+(:where $title = "7 يناير":)
+where $title = "اسرائيل"
 return 
 (:(
     <title>{$title}</title>,
@@ -64,7 +67,7 @@ return
    "&#10;"
    ) :)
 (:   $bla/ptk:ast/CompiledPage/warnings:)
-   $parsedPage
+   $pageI
 (: every link which has no text but not the interwiki links at the bottom of the page
 $bla//WtInternalLink/target[not(../title//ptk:t)] except $bla/ptk:ast/EngCompiledPage/page/ptk:l/WtSection[last()]/body/ptk:l/ptk:l[last()]/WtInternalLink/target :)
 
