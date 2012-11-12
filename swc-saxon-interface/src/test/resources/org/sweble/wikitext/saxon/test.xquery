@@ -47,7 +47,8 @@ let $pageI := $parsedPage/ptk:ast/swc:EngCompiledPage//swc:EngPage
 (:where $title = "الامبراطوريه الرومانيه":)
 (:where $title = "نايجيريا":)
 (:where $title = "7 يناير":)
-where $title = "اسرائيل"
+(:where $title = "اسرائيل":)
+where $title = "الصفحه الرئيسيه"
 return 
 (:(
     <title>{$title}</title>,

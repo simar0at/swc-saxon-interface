@@ -256,7 +256,7 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 
 			result = SingletonIterator.makeIterator((NodeInfo)doc);
 		} catch (CompilerException e) {
-			writeWikiTextOnException(e.getPageTitle().getTitle(), e, e.getWikiText() == "" ? data : e.getWikiText());
+			writeWikiTextOnException(e.getPageTitle().getTitle(), e, e.getWikiText().equals("") ? data : e.getWikiText());
 		} catch (SerializationException e) {
 			writeWikiTextOnException(title, e, data);
 		} catch (Exception e) {
