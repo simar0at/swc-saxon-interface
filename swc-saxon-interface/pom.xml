@@ -111,12 +111,10 @@
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
         <configuration>
-          <header>./etc/license-header.txt</header>
-          <mapping>
-            <rats>JAVADOC_STYLE</rats>
-            <xjb>XML_STYLE</xjb>
-          </mapping>
-          <header>./etc/license-header.txt</header>
+          <header>etc/license-header.txt</header>
+          <strictCheck>true</strictCheck>
+          <failIfMissing>false</failIfMissing>
+          <skip>false</skip>
           <excludes>
             <exclude>src/test/resources/**</exclude>
             <exclude>run.java</exclude>
