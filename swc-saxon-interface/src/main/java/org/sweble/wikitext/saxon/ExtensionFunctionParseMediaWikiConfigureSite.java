@@ -21,7 +21,7 @@ import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.om.*;
 import net.sf.saxon.value.SequenceType;
 
-// swc:configureSite($siteName as xs:string, $wikiUrl as xs:string, $contentLang as xs:string, $ownIwPrefix as xs:string, $reportProblems as xs:booblen)
+// swc:configureSite($siteName as xs:string, $wikiUrl as xs:string, $contentLang as xs:string, $ownIwPrefix as xs:string, $doWOMLikeProcessing as xs:boolean?, $reportProblems as xs:booblen?)
 public class ExtensionFunctionParseMediaWikiConfigureSite extends
 		ExtensionFunctionDefinition {
 
@@ -31,7 +31,7 @@ public class ExtensionFunctionParseMediaWikiConfigureSite extends
                     "http://sweble.org/doc/site/tooling/sweble/sweble-wikitext",
                     "configureSite");
 	private final static SequenceType[] argumentTypes = new SequenceType[] {
-        SequenceType.SINGLE_STRING, SequenceType.SINGLE_STRING, SequenceType.SINGLE_STRING, SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_BOOLEAN};
+        SequenceType.SINGLE_STRING, SequenceType.SINGLE_STRING, SequenceType.SINGLE_STRING, SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_BOOLEAN , SequenceType.OPTIONAL_BOOLEAN};
 	
 	@Override
 	public SequenceType[] getArgumentTypes() {
@@ -50,7 +50,7 @@ public class ExtensionFunctionParseMediaWikiConfigureSite extends
 
     @Override
     public int getMaximumNumberOfArguments() {
-        return 5;
+        return 6;
     }
     
 	@Override

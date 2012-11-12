@@ -35,8 +35,6 @@ import net.sf.saxon.value.StringValue;
 public class ExtensionFunctionParseMediaWikiStorePageTitleCall extends ExtensionFunctionParseMediaWikiCall {
 
 	private static final long serialVersionUID = 6130119479298672307L;
-	private WikiConfigImpl config = null;
-	private DocumentInfo configDoc = null;
 
 	/**
 	 * see also http://old.nabble.com/problem-returning-a-document-fragment-from-saxon-9.3-integrated-extension-function-td32318492.html
@@ -57,12 +55,22 @@ public class ExtensionFunctionParseMediaWikiStorePageTitleCall extends Extension
 		int revision;
 		try {
 			DocumentInfo currentConfigDoc = (DocumentInfo) args[2].next();
-			if (configDoc == null || !configDoc.equals(currentConfigDoc))
+			if (configDoc == null)
 				try {
 					configDoc = currentConfigDoc;
 					config = WikiConfigImpl.load(new DOMSource(NodeOverNodeInfo.wrap(configDoc)));
 				} catch (JAXBException e) {
 					return EmptyIterator.getInstance();
+				}
+			else 
+				synchronized (configDoc) {
+					if (!configDoc.equals(currentConfigDoc))				
+						try {
+							configDoc = currentConfigDoc;
+							config = WikiConfigImpl.load(new DOMSource(NodeOverNodeInfo.wrap(configDoc)));
+						} catch (JAXBException e) {
+							return EmptyIterator.getInstance();
+						}	
 				}
 			
 			StringValue in = (StringValue) args[0].next();

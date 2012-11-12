@@ -68,15 +68,23 @@ public class ExtensionFunctionParseMediaWikiConfigureSiteFromURLCall
 		wikiUrl =  arg.replaceAll("wiki/.+$", "wiki/\\$1");
 		contentLang = iwPrefix = arg.replaceAll("http://", "").replaceAll("\\..*$", ""); 
 		
+		boolean doWOMLikeProcessing = false;
+		
+		if (args.length == 3) {
+			BooleanValue lastOption = (BooleanValue) args[2].next();
+			if(null != lastOption) {
+				doWOMLikeProcessing = lastOption.getBooleanValue();
+			}
+		}
 
-		if (args.length == 2) {
-			BooleanValue lastOption = (BooleanValue) args[4].next();
+		if (args.length == 4) {
+			BooleanValue lastOption = (BooleanValue) args[3].next();
 			if(null != lastOption) {
 				reportProblems = lastOption.getBooleanValue();
 			}
 		}
 
-		return call(siteName, wikiUrl, contentLang, iwPrefix, reportProblems, ctx);
+		return call(siteName, wikiUrl, contentLang, iwPrefix, doWOMLikeProcessing, reportProblems, ctx);
 	}
 
 }

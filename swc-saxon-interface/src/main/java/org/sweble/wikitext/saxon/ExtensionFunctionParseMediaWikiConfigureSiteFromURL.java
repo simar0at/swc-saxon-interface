@@ -21,7 +21,7 @@ import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.om.*;
 import net.sf.saxon.value.SequenceType;
 
-// swc:configureSite($siteName as xs:string, $baseUrl as xs:string, $reportProblems as xs:booblen)
+// swc:configureSite($siteName as xs:string, $baseUrl as xs:string, $doWOMLikeProcessing as xs:boolean?, $reportProblems as xs:booblen?)
 public class ExtensionFunctionParseMediaWikiConfigureSiteFromURL extends
 		ExtensionFunctionDefinition {
 
@@ -32,7 +32,7 @@ public class ExtensionFunctionParseMediaWikiConfigureSiteFromURL extends
                     "http://sweble.org/doc/site/tooling/sweble/sweble-wikitext",
                     "configureSiteFromURL");
 	private final static SequenceType[] argumentTypes = new SequenceType[] {
-        SequenceType.SINGLE_STRING, SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_BOOLEAN};
+        SequenceType.SINGLE_STRING, SequenceType.SINGLE_STRING, SequenceType.OPTIONAL_BOOLEAN, SequenceType.OPTIONAL_BOOLEAN};
 	
 	@Override
 	public SequenceType[] getArgumentTypes() {
@@ -51,7 +51,7 @@ public class ExtensionFunctionParseMediaWikiConfigureSiteFromURL extends
 
     @Override
     public int getMaximumNumberOfArguments() {
-        return 3;
+        return 4;
     }
     
 	@Override

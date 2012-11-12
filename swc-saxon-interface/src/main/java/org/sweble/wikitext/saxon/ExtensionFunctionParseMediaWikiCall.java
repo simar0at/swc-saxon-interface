@@ -84,8 +84,8 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 	protected static Map<String, FullPage> knownPages = Collections.synchronizedMap(new LinkedHashMap<String, FullPage>());
 	protected static boolean reportProblems = false;
 	
-	private WikiConfigImpl config = null;
-	private DocumentInfo configDoc = null;
+	protected static WikiConfigImpl config = null;
+	protected static DocumentInfo configDoc = null;
 	
 	private TreeModel treeModel = null;
 	private PipelineConfiguration pipe = null;
@@ -126,12 +126,22 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 		try {
 			
 			DocumentInfo currentConfigDoc = (DocumentInfo) args[2].next();
-			if (configDoc == null || !configDoc.equals(currentConfigDoc))
+			if (configDoc == null)
 				try {
 					configDoc = currentConfigDoc;
 					config = WikiConfigImpl.load(new DOMSource(NodeOverNodeInfo.wrap(configDoc)));
 				} catch (JAXBException e) {
 					return EmptyIterator.getInstance();
+				}
+			else 
+				synchronized (configDoc) {
+					if (!configDoc.equals(currentConfigDoc))				
+						try {
+							configDoc = currentConfigDoc;
+							config = WikiConfigImpl.load(new DOMSource(NodeOverNodeInfo.wrap(configDoc)));
+						} catch (JAXBException e) {
+							return EmptyIterator.getInstance();
+						}	
 				}
 			
 			StringValue in = (StringValue) args[0].next();

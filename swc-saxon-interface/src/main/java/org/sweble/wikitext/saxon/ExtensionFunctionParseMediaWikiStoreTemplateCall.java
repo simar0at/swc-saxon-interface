@@ -46,9 +46,6 @@ public class ExtensionFunctionParseMediaWikiStoreTemplateCall extends ExtensionF
 //		return null;
 //	}
 	
-	private WikiConfigImpl config = null;
-	private DocumentInfo configDoc = null;
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public SequenceIterator<NodeInfo> call(
@@ -59,12 +56,22 @@ public class ExtensionFunctionParseMediaWikiStoreTemplateCall extends ExtensionF
 		String text = ""; 
 		try {
 			DocumentInfo currentConfigDoc = (DocumentInfo) args[3].next();
-			if (configDoc == null || !configDoc.equals(currentConfigDoc))
+			if (configDoc == null)
 				try {
 					configDoc = currentConfigDoc;
 					config = WikiConfigImpl.load(new DOMSource(NodeOverNodeInfo.wrap(configDoc)));
 				} catch (JAXBException e) {
 					return EmptyIterator.getInstance();
+				}
+			else 
+				synchronized (configDoc) {
+					if (!configDoc.equals(currentConfigDoc))				
+						try {
+							configDoc = currentConfigDoc;
+							config = WikiConfigImpl.load(new DOMSource(NodeOverNodeInfo.wrap(configDoc)));
+						} catch (JAXBException e) {
+							return EmptyIterator.getInstance();
+						}	
 				}
 			
 			StringValue in = (StringValue) args[0].next();

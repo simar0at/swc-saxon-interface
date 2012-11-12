@@ -63,22 +63,34 @@ public class ExtensionFunctionParseMediaWikiConfigureSiteCall extends ExtensionF
 			in = null;
 		}
 
+		boolean doWOMLikeProsessing = false;
+		
 		if (args.length == 5) {
+			BooleanValue lastOption = (BooleanValue) args[4].next();
+			if(null != lastOption) {
+				doWOMLikeProsessing = lastOption.getBooleanValue();
+			}
+		}
+
+		if (args.length == 6) {
 			BooleanValue lastOption = (BooleanValue) args[4].next();
 			if(null != lastOption) {
 				reportProblems = lastOption.getBooleanValue();
 			}
 		}
 
-		return call(argsAsStrings.get(0), argsAsStrings.get(1), argsAsStrings.get(2), argsAsStrings.get(3), reportProblems, ctx);
+		return call(argsAsStrings.get(0), argsAsStrings.get(1), argsAsStrings.get(2), argsAsStrings.get(3), doWOMLikeProsessing, reportProblems, ctx);
 	}
 
 	
 	@SuppressWarnings("unchecked")
-	protected SequenceIterator<NodeInfo> call(String siteName, String wikiUrl, String contentLang, String ownIwPrefix, boolean reportProblems, XPathContext ctx)
+	protected SequenceIterator<NodeInfo> call(String siteName, String wikiUrl, String contentLang, 
+			String ownIwPrefix, boolean doWOMLikeProsessing, boolean reportProblems, XPathContext ctx)
 	{
 		ExtensionFunctionParseMediaWikiCall.reportProblems = reportProblems;
 		WikiConfigImpl impl = new DefaultConfigForDump(siteName, wikiUrl, contentLang, ownIwPrefix).getConfig();
+		
+		impl.getParserConfig().setWOMlikeProcessing(doWOMLikeProsessing);
 		
 		SequenceIterator<NodeInfo> result = EmptyIterator.getInstance(); 
 		try
