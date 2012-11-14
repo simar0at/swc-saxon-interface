@@ -6,17 +6,18 @@ declare namespace ptk="http://sweble.org/doc/site/tooling/parser-toolkit/ptk-xml
 declare option saxon:output "method=xml";
 declare option saxon:output "indent=yes";
 
+(:
 declare function local:getIwPrefix($s as xs:string) as xs:string {
     replace(replace($s, "http://", ""), "\..*$", "")
 };
 
-(:let $site := swc:configureSite(/mw:mediawiki/mw:siteinfo/mw:sitename,
+let $site := swc:configureSite(/mw:mediawiki/mw:siteinfo/mw:sitename,
 replace(/mw:mediawiki/mw:siteinfo/mw:base, "wiki/.+$", "wiki/\$1"),
 local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
 local:getIwPrefix(/mw:mediawiki/mw:siteinfo/mw:base),
 true()):)
 let $baseConfig := swc:configureSiteFromURL(/mw:mediawiki/mw:siteinfo/mw:sitename,
-    /mw:mediawiki/mw:siteinfo/mw:base, true(), true())    
+    /mw:mediawiki/mw:siteinfo/mw:base, true(), false())    
 
 let $config := swc:configureNamespace(data(/mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace/@key), /mw:mediawiki/mw:siteinfo/mw:namespaces/mw:namespace, $baseConfig)
 
@@ -48,7 +49,8 @@ let $pageI := $parsedPage/ptk:ast/swc:EngCompiledPage//swc:EngPage
 (:where $title = "نايجيريا":)
 (:where $title = "7 يناير":)
 (:where $title = "اسرائيل":)
-where $title = "الصفحه الرئيسيه"
+(:where $title = "الصفحه الرئيسيه":)
+where $title = "السودان"
 return 
 (:(
     <title>{$title}</title>,
