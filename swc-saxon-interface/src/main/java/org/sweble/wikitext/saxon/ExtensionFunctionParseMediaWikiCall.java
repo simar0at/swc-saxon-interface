@@ -93,16 +93,16 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 	private Properties envProperties = System.getProperties();
 	private Properties enforceSaxon9Propertiess = new Properties(envProperties);
 	
-	private NameAbbrevService as = new NameAbbrevService(PTK, PTK_NS,
-			new String[]{"de.fau.cs.osr.ptk.common.test", "ptk"},
-			new String[]{"de.fau.cs.osr.ptk.common.xml", "ptk"},
-			new String[]{"org.sweble.wikitext.lazy.parser", "swc", "http://sweble.org/doc/site/tooling/sweble/sweble-wikitext"},
-			new String[]{"org.sweble.wikitext.lazy.preprocessor", "swc"},
-			new String[]{"org.sweble.wikitext.lazy.utils", "swc"},
-			new String[]{"org.sweble.wikitext.engine", "swc"},
-			new String[]{"org.sweble.wikitext.engine.nodes", "swc"},
-			new String[]{"org.sweble.wikitext.engine.log", "swc"},
-			new String[]{"org.sweble.wikitext.parser.nodes", "swc"});
+	private NameAbbrevService as = new NameAbbrevService(
+			"de.fau.cs.osr.ptk.common.test",
+			"de.fau.cs.osr.ptk.common.xml",
+			"org.sweble.wikitext.lazy.parser",
+			"org.sweble.wikitext.lazy.preprocessor",
+			"org.sweble.wikitext.lazy.utils",
+			"org.sweble.wikitext.engine",
+			"org.sweble.wikitext.engine.nodes",
+			"org.sweble.wikitext.engine.log",
+			"org.sweble.wikitext.parser.nodes");
 
 	//	@Override
 	//	public void copyLocalData(ExtensionFunctionCall destination) {
@@ -256,7 +256,7 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 
 			result = SingletonIterator.makeIterator((NodeInfo)doc);
 		} catch (CompilerException e) {
-			writeWikiTextOnException(e.getPageTitle().getTitle(), e, e.getWikiText().equals("") ? data : e.getWikiText());
+			writeWikiTextOnException(e.getPageTitle().getTitle(), e, data);
 		} catch (SerializationException e) {
 			writeWikiTextOnException(title, e, data);
 		} catch (Exception e) {

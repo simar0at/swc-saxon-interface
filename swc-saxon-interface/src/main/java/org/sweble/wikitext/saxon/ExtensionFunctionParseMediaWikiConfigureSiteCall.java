@@ -90,8 +90,6 @@ public class ExtensionFunctionParseMediaWikiConfigureSiteCall extends ExtensionF
 		ExtensionFunctionParseMediaWikiCall.reportProblems = reportProblems;
 		WikiConfigImpl impl = new DefaultConfigForDump(siteName, wikiUrl, contentLang, ownIwPrefix).getConfig();
 		
-		impl.getParserConfig().setWOMlikeProcessing(doWOMLikeProsessing);
-		
 		SequenceIterator<NodeInfo> result = EmptyIterator.getInstance(); 
 		try
 		{
