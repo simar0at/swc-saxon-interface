@@ -16,9 +16,6 @@
 
 package org.sweble.wikitext.saxon;
 
-import org.sweble.wikitext.engine.config.WikiConfigImpl;
-import org.sweble.wikitext.engine.utils.DefaultConfig;
-
 public class DefaultConfigForDump extends DefaultConfig {
 
 	private String siteName = "My Wiki";

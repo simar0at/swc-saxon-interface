@@ -33,7 +33,7 @@ public class ExtensionFunctionParseMediaWikiConfigureNS extends
                     "http://sweble.org/doc/site/tooling/sweble/sweble-wikitext",
                     "configureNamespace");
 	private final static SequenceType[] argumentTypes = new SequenceType[] {
-        SequenceType.makeSequenceType(BuiltInAtomicType.INT, StaticProperty.ALLOWS_ONE_OR_MORE), SequenceType.makeSequenceType(BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ONE_OR_MORE), SequenceType.OPTIONAL_DOCUMENT_NODE};
+        SequenceType.makeSequenceType(BuiltInAtomicType.INTEGER, StaticProperty.ALLOWS_ONE_OR_MORE), SequenceType.makeSequenceType(BuiltInAtomicType.STRING, StaticProperty.ALLOWS_ONE_OR_MORE), SequenceType.OPTIONAL_DOCUMENT_NODE};
 	
 	@Override
 	public SequenceType[] getArgumentTypes() {

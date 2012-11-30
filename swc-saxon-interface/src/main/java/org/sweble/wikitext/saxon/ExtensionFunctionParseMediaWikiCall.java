@@ -17,7 +17,6 @@
 package org.sweble.wikitext.saxon;
 
 import static org.sweble.wikitext.saxon.util.*;
-import static de.fau.cs.osr.ptk.common.xml.XmlConstants.PTK;
 import static de.fau.cs.osr.ptk.common.xml.XmlConstants.PTK_NS;
 
 import java.io.BufferedWriter;
@@ -36,7 +35,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.dom.DOMSource;
 
 import de.fau.cs.osr.ptk.common.xml.SerializationException;
-import de.fau.cs.osr.ptk.common.xml.XmlWriter;
 import de.fau.cs.osr.utils.NameAbbrevService;
 
 import org.sweble.wikitext.engine.CompilerException;
@@ -49,7 +47,6 @@ import org.sweble.wikitext.engine.PageId;
 import org.sweble.wikitext.engine.PageTitle;
 import org.sweble.wikitext.engine.ParserFunctionBase;
 import org.sweble.wikitext.engine.WtEngine;
-import org.sweble.wikitext.engine.config.WikiConfigImpl;
 import org.sweble.wikitext.engine.lognodes.ResolveParserFunctionLog;
 import org.sweble.wikitext.engine.lognodes.ResolveTagExtensionLog;
 import org.sweble.wikitext.engine.lognodes.ResolveTransclusionLog;
@@ -226,6 +223,10 @@ public class ExtensionFunctionParseMediaWikiCall extends ExtensionFunctionCall {
 //				System.err.println(w.toString());
 //			}
 
+			// Warnings are more less useless, they are opaque encoded strings
+			p.getWarnings().clear();
+			// same goes for log
+			p.getLog().clear();
 			DocumentInfo doc = null;
 			XmlWriter<WtNode> ptkToXmlWriter = new XmlWriter<WtNode>(WtNode.class, WtNodeList.WtNodeListImpl.class, WtText.class);
 			net.sf.saxon.Configuration saxonConf = ctx.getConfiguration();

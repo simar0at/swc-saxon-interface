@@ -14,7 +14,7 @@
   <groupId>org.sweble.wikitext</groupId>
   <artifactId>swc-saxon-interface</artifactId>
   <packaging>jar</packaging>
-  <version>0.8-SNAPSHOT</version>
+  <version>0.8-alpha-1-SNAPSHOT</version>
   
   <name>SWC - Sweble Engine Saxon interface</name>
   <url>http://maven.apache.org</url>

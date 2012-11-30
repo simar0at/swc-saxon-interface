@@ -16,5 +16,7 @@ let $baseConfig := swc:configureSite("My English Wiki",
 "en",
 true())
 
+let $config := swc:configureNamespace((-2, -1, 0, 1), ("Media", "Special", "", "Talk"), $baseConfig)
+
 return
-    $baseConfig
+    $config

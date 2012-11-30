@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.xml.bind.util.JAXBSource;
 
-import org.sweble.wikitext.engine.config.WikiConfigImpl;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;

@@ -22,7 +22,6 @@ import javax.xml.transform.dom.DOMSource;
 import org.sweble.wikitext.engine.FullPage;
 import org.sweble.wikitext.engine.PageId;
 import org.sweble.wikitext.engine.PageTitle;
-import org.sweble.wikitext.engine.config.WikiConfigImpl;
 
 import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.expr.XPathContext;

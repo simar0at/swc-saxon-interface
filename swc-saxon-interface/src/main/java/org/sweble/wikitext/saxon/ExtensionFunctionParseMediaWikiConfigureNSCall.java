@@ -27,7 +27,6 @@ import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.dom.DOMSource;
 
 import org.sweble.wikitext.engine.config.NamespaceImpl;
-import org.sweble.wikitext.engine.config.WikiConfigImpl;
 import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.om.*;

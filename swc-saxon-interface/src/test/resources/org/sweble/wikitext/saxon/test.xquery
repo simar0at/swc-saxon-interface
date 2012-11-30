@@ -70,7 +70,7 @@ return
    "&#10;"
    ) :)
 (:   $bla/ptk:ast/CompiledPage/warnings:)
-   $pageI
+   $parsedPage
 (: every link which has no text but not the interwiki links at the bottom of the page
 $bla//WtInternalLink/target[not(../title//ptk:t)] except $bla/ptk:ast/EngCompiledPage/page/ptk:l/WtSection[last()]/body/ptk:l/ptk:l[last()]/WtInternalLink/target :)
 
