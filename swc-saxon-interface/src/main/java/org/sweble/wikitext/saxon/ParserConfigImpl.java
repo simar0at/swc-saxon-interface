@@ -34,8 +34,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.sweble.wikitext.engine.PageTitle;
-import org.sweble.wikitext.engine.config.InterwikiImpl;
 import org.sweble.wikitext.engine.config.NamespaceImpl;
 import org.sweble.wikitext.engine.nodes.EngineNodeFactory;
 import org.sweble.wikitext.parser.ParserConfig;
@@ -56,10 +54,9 @@ import org.sweble.wikitext.parser.utils.AstTextUtils;
 		"internalLinkPrefixPattern",
 		"internalLinkPostfixPattern",
 		"jaxbAllowedUrlProtocols",
-		/* TODO: Remove when we really don't need it any more
-		"jaxbXmlElementBehavior",
-		*/
-		"jaxbXmlEntities"})
+		"jaxbXmlEntities",
+		"jaxbLctFlagMappings",
+		"jaxbLctVariantMappings" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class ParserConfigImpl
 		implements
@@ -93,15 +90,13 @@ public class ParserConfigImpl
 	@XmlElement
 	private String internalLinkPostfixPattern;
 	
-	/* TODO: Remove when we really don't need it any more
-	private final Set<String> allowedXmlElements = new HashSet<String>();
+	private final Map<String, String> lctFlagMap = new HashMap<String, String>();
 	
-	private final Set<String> emptyOnlyXmlElements = new HashSet<String>();
-	*/
+	private final Map<String, String> lctVariantMap = new HashMap<String, String>();
 	
 	// =========================================================================
 	
-	protected ParserConfigImpl() // Don't use this. It's for the JAXB unmarshaller only!
+	protected ParserConfigImpl()
 	{
 		// null for currentWikiConfigForUnmarshalling renders the whole config useless!
 		this(currentWikiConfigForUnmarshalling);
@@ -120,6 +115,12 @@ public class ParserConfigImpl
 		if (old != null)
 			throw new IllegalArgumentException("XML entity `" + name + "' already registered.");
 		xmlEntities.put(name, resolvesTo);
+	}
+
+	@Override
+	public Map<String, String> getXmlEntities()
+	{
+		return xmlEntities;
 	}
 	
 	@Override
@@ -264,8 +265,6 @@ public class ParserConfigImpl
 				return LinkType.IMAGE;
 		}
 		
-		nsStr = ltp.getInterwiki();
-		
 		return LinkType.PAGE;
 	}
 	
@@ -310,115 +309,60 @@ public class ParserConfigImpl
 	
 	// ==[ Parsing XML elements ]===============================================
 	
-	/* TODO: We will probably need these again?
-	@Override
-	public boolean isXmlElementAllowed(String name)
-	{
-		return allowedXmlElements.contains(name.toLowerCase());
-	}
-	
-	@Override
-	public boolean isXmlElementEmptyOnly(String name)
-	{
-		return emptyOnlyXmlElements.contains(name.toLowerCase());
-	}
-	*/
-	
 	@Override
 	public boolean isValidXmlEntityRef(String name)
 	{
 		return resolveXmlEntity(name) != null;
 	}
 	
-	// =========================================================================
+	// ==[ Language Conversion Tags ]===========================================
 	
 	@Override
-	public int hashCode()
+	public boolean isLctFlag(String flag)
 	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((allowedUrlProtocols == null) ? 0 : allowedUrlProtocols.hashCode());
-		/* TODO: Remove when we really don't need it any more
-		result = prime * result + ((allowedXmlElements == null) ? 0 : allowedXmlElements.hashCode());
-		*/
-		result = prime * result + (autoCorrect ? 1231 : 1237);
-		/* TODO: Remove when we really don't need it any more
-		result = prime * result + ((emptyOnlyXmlElements == null) ? 0 : emptyOnlyXmlElements.hashCode());
-		*/
-		result = prime * result + (gatherRtData ? 1231 : 1237);
-		result = prime * result + ((internalLinkPostfixPattern == null) ? 0 : internalLinkPostfixPattern.hashCode());
-		result = prime * result + ((internalLinkPrefixPattern == null) ? 0 : internalLinkPrefixPattern.hashCode());
-		result = prime * result + ((minSeverity == null) ? 0 : minSeverity.hashCode());
-		result = prime * result + (warningsEnabled ? 1231 : 1237);
-		result = prime * result + ((xmlEntities == null) ? 0 : xmlEntities.hashCode());
-		return result;
+		return lctFlagMap.containsKey(normalizeLctFlag(flag));
 	}
 	
 	@Override
-	public boolean equals(Object obj)
+	public String normalizeLctFlag(String flag)
 	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ParserConfigImpl other = (ParserConfigImpl) obj;
-		if (allowedUrlProtocols == null)
-		{
-			if (other.allowedUrlProtocols != null)
-				return false;
-		}
-		else if (!allowedUrlProtocols.equals(other.allowedUrlProtocols))
-			return false;
-		/* TODO: Remove when we really don't need it any more
-		if (allowedXmlElements == null)
-		{
-			if (other.allowedXmlElements != null)
-				return false;
-		}
-		else if (!allowedXmlElements.equals(other.allowedXmlElements))
-			return false;
-		*/
-		if (autoCorrect != other.autoCorrect)
-			return false;
-		/* TODO: Remove when we really don't need it any more
-		if (emptyOnlyXmlElements == null)
-		{
-			if (other.emptyOnlyXmlElements != null)
-				return false;
-		}
-		else if (!emptyOnlyXmlElements.equals(other.emptyOnlyXmlElements))
-			return false;
-		*/
-		if (gatherRtData != other.gatherRtData)
-			return false;
-		if (internalLinkPostfixPattern == null)
-		{
-			if (other.internalLinkPostfixPattern != null)
-				return false;
-		}
-		else if (!internalLinkPostfixPattern.equals(other.internalLinkPostfixPattern))
-			return false;
-		if (internalLinkPrefixPattern == null)
-		{
-			if (other.internalLinkPrefixPattern != null)
-				return false;
-		}
-		else if (!internalLinkPrefixPattern.equals(other.internalLinkPrefixPattern))
-			return false;
-		if (minSeverity != other.minSeverity)
-			return false;
-		if (warningsEnabled != other.warningsEnabled)
-			return false;
-		if (xmlEntities == null)
-		{
-			if (other.xmlEntities != null)
-				return false;
-		}
-		else if (!xmlEntities.equals(other.xmlEntities))
-			return false;
-		return true;
+		flag = flag.trim().toUpperCase();
+		String normalized = lctFlagMap.get(flag);
+		if (normalized == null)
+			normalized = flag;
+		return normalized;
+	}
+	
+	public void addLctFlagMapping(String name, String normalized)
+	{
+		String old = lctFlagMap.get(name);
+		if (old != null)
+			throw new IllegalArgumentException("LCT flag mapping `" + name + "' already registered.");
+		this.lctFlagMap.put(name, normalized);
+	}
+	
+	@Override
+	public boolean isLctVariant(String variant)
+	{
+		return lctVariantMap.containsKey(normalizeLctVariant(variant));
+	}
+	
+	@Override
+	public String normalizeLctVariant(String variant)
+	{
+		variant = variant.trim().toUpperCase();
+		String normalized = lctVariantMap.get(variant);
+		if (normalized == null)
+			normalized = variant;
+		return normalized;
+	}
+	
+	public void addLctVariantMapping(String name, String normalized)
+	{
+		String old = lctVariantMap.get(name);
+		if (old != null)
+			throw new IllegalArgumentException("LCT variant mapping `" + name + "' already registered.");
+		this.lctVariantMap.put(name, normalized);
 	}
 	
 	// =========================================================================
@@ -472,70 +416,6 @@ public class ParserConfigImpl
 	
 	// =========================================================================
 	
-	/* TODO: Remove when we really don't need it any more
-	@SuppressWarnings("unused")
-	private static final class XmlElementBehaviorEntry
-			implements
-				Comparable<XmlElementBehaviorEntry>
-	{
-		@XmlAttribute
-		private String name;
-		
-		@XmlAttribute
-		private ScopeType type;
-		
-		@XmlAttribute
-		boolean emptyOnly;
-		
-		private XmlElementBehaviorEntry()
-		{
-		}
-		
-		public XmlElementBehaviorEntry(
-				String name,
-				ScopeType type,
-				boolean emptyOnly)
-		{
-			super();
-			this.name = name;
-			this.type = type;
-			this.emptyOnly = emptyOnly;
-		}
-		
-		@Override
-		public int compareTo(XmlElementBehaviorEntry o)
-		{
-			return name.compareTo(o.name);
-		}
-	}
-	
-	@XmlElement(name = "element")
-	@XmlElementWrapper(name = "xmlElementBehavior")
-	@SuppressWarnings("unused")
-	private XmlElementBehaviorEntry[] getJaxbXmlElementBehavior()
-	{
-		XmlElementBehaviorEntry[] array = new XmlElementBehaviorEntry[xmlElementTypes.size()];
-		int i = 0;
-		for (Entry<String, ScopeType> e : xmlElementTypes.entrySet())
-			array[i++] = new XmlElementBehaviorEntry(
-					e.getKey(),
-					e.getValue(),
-					isXmlElementEmptyOnly(e.getKey()));
-		Arrays.sort(array);
-		return array;
-	}
-	
-	@SuppressWarnings("unused")
-	private void setJaxbXmlElementBehavior(
-			XmlElementBehaviorEntry[] xmlElementTypes)
-	{
-		for (XmlElementBehaviorEntry e : xmlElementTypes)
-			setXmlElementBehavior(e.name, e.type, e.emptyOnly);
-	}
-	*/
-	
-	// =========================================================================
-	
 	@SuppressWarnings("unused")
 	private static final class UrlProtocolEntry
 	{
@@ -570,19 +450,185 @@ public class ParserConfigImpl
 		for (UrlProtocolEntry protocol : protocols)
 			addUrlProtocol(protocol.name);
 	}
-
-	public String getUrlForInterwikiSite(String articleNameWithPrefix) throws LinkTargetException {
-		LinkTargetParser ltp = new LinkTargetParser();
-		ltp.parse(this, articleNameWithPrefix);
-		InterwikiImpl iw = wikiConfig.getInterwiki(ltp.getInterwiki());
-		if (iw == null)
-			throw new LinkTargetException(articleNameWithPrefix, "cannot be resolved as interwiki link");
-		String result;
-		if (ltp.getTitle().equals(""))
-			result = iw.getUrl().replace("$1", "");
-		else
-			result = iw.getUrl(PageTitle.make(wikiConfig, ltp.getTitle())).toString();
+	
+	// =========================================================================
+	
+	private static final class LctFlagMapEntry
+			implements
+				Comparable<LctFlagMapEntry>
+	{
+		@XmlAttribute
+		private String name;
+		
+		@XmlAttribute
+		private String normalized;
+		
+		private LctFlagMapEntry()
+		{
+		}
+		
+		private LctFlagMapEntry(String name, String normalized)
+		{
+			this.name = name;
+			this.normalized = normalized;
+		}
+		
+		@Override
+		public int compareTo(LctFlagMapEntry o)
+		{
+			return name.compareTo(o.name);
+		}
+	}
+	
+	@XmlElement(name = "lctFlag")
+	@XmlElementWrapper(name = "lctFlagMappings")
+	@SuppressWarnings("unused")
+	private LctFlagMapEntry[] getJaxbLctFlagMappings()
+	{
+		LctFlagMapEntry[] array = new LctFlagMapEntry[lctFlagMap.size()];
+		int i = 0;
+		for (Entry<String, String> e : lctFlagMap.entrySet())
+			array[i++] = new LctFlagMapEntry(e.getKey(), e.getValue());
+		Arrays.sort(array);
+		return array;
+	}
+	
+	@SuppressWarnings("unused")
+	private void setJaxbLctFlagMappings(LctFlagMapEntry[] lctFlagMap)
+	{
+		for (LctFlagMapEntry e : lctFlagMap)
+			addLctFlagMapping(e.name, e.normalized);
+	}
+	
+	// =========================================================================
+	
+	private static final class LctVariantMapEntry
+			implements
+				Comparable<LctVariantMapEntry>
+	{
+		@XmlAttribute
+		private String name;
+		
+		@XmlAttribute
+		private String normalized;
+		
+		private LctVariantMapEntry()
+		{
+		}
+		
+		private LctVariantMapEntry(String name, String normalized)
+		{
+			this.name = name;
+			this.normalized = normalized;
+		}
+		
+		@Override
+		public int compareTo(LctVariantMapEntry o)
+		{
+			return name.compareTo(o.name);
+		}
+	}
+	
+	@XmlElement(name = "lctVariant")
+	@XmlElementWrapper(name = "lctVariantMappings")
+	@SuppressWarnings("unused")
+	private LctVariantMapEntry[] getJaxbLctVariantMappings()
+	{
+		LctVariantMapEntry[] array = new LctVariantMapEntry[lctVariantMap.size()];
+		int i = 0;
+		for (Entry<String, String> e : lctVariantMap.entrySet())
+			array[i++] = new LctVariantMapEntry(e.getKey(), e.getValue());
+		Arrays.sort(array);
+		return array;
+	}
+	
+	@SuppressWarnings("unused")
+	private void setJaxbLctVariantMappings(LctVariantMapEntry[] lctVariantMap)
+	{
+		for (LctVariantMapEntry e : lctVariantMap)
+			addLctVariantMapping(e.name, e.normalized);
+	}
+	
+	// =========================================================================
+	
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((allowedUrlProtocols == null) ? 0 : allowedUrlProtocols.hashCode());
+		result = prime * result + (autoCorrect ? 1231 : 1237);
+		result = prime * result + (gatherRtData ? 1231 : 1237);
+		result = prime * result + ((internalLinkPostfixPattern == null) ? 0 : internalLinkPostfixPattern.hashCode());
+		result = prime * result + ((internalLinkPrefixPattern == null) ? 0 : internalLinkPrefixPattern.hashCode());
+		result = prime * result + ((lctFlagMap == null) ? 0 : lctFlagMap.hashCode());
+		result = prime * result + ((lctVariantMap == null) ? 0 : lctVariantMap.hashCode());
+		result = prime * result + ((minSeverity == null) ? 0 : minSeverity.hashCode());
+		result = prime * result + (warningsEnabled ? 1231 : 1237);
+		result = prime * result + ((xmlEntities == null) ? 0 : xmlEntities.hashCode());
 		return result;
 	}
-
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ParserConfigImpl other = (ParserConfigImpl) obj;
+		if (allowedUrlProtocols == null)
+		{
+			if (other.allowedUrlProtocols != null)
+				return false;
+		}
+		else if (!allowedUrlProtocols.equals(other.allowedUrlProtocols))
+			return false;
+		if (autoCorrect != other.autoCorrect)
+			return false;
+		if (gatherRtData != other.gatherRtData)
+			return false;
+		if (internalLinkPostfixPattern == null)
+		{
+			if (other.internalLinkPostfixPattern != null)
+				return false;
+		}
+		else if (!internalLinkPostfixPattern.equals(other.internalLinkPostfixPattern))
+			return false;
+		if (internalLinkPrefixPattern == null)
+		{
+			if (other.internalLinkPrefixPattern != null)
+				return false;
+		}
+		else if (!internalLinkPrefixPattern.equals(other.internalLinkPrefixPattern))
+			return false;
+		if (lctFlagMap == null)
+		{
+			if (other.lctFlagMap != null)
+				return false;
+		}
+		else if (!lctFlagMap.equals(other.lctFlagMap))
+			return false;
+		if (lctVariantMap == null)
+		{
+			if (other.lctVariantMap != null)
+				return false;
+		}
+		else if (!lctVariantMap.equals(other.lctVariantMap))
+			return false;
+		if (minSeverity != other.minSeverity)
+			return false;
+		if (warningsEnabled != other.warningsEnabled)
+			return false;
+		if (xmlEntities == null)
+		{
+			if (other.xmlEntities != null)
+				return false;
+		}
+		else if (!xmlEntities.equals(other.xmlEntities))
+			return false;
+		return true;
+	}
 }
